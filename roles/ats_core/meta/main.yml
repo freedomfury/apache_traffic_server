@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  role_name: ats_core
+  author: frefur
+  description: Install and configures Apache Traffic Server
+  company: NA
+  galaxy_tags: [apache, trafficserver, ats, traffic, server]
+  license: MIT
+
+  min_ansible_version: 2.9
+
+  platforms:
+  - name: CentOS
+    versions:
+      - 7
+      - 8
+
+dependencies: []

@@ -1,0 +1,15 @@
+---
+# Generic Build commands
+ats_build_autoconfig: autoreconf -if
+ats_build_configure: ./configure --prefix={{ ats_build_configure_prefix }}
+ats_build_make: make
+ats_build_make_test: make test
+ats_build_make_install: make install
+
+ats_build_os_common_name: "{{ ansible_facts.distribution | lower }}{{ansible_facts.distribution_major_version }}"
+ats_build_os_vars_path: "vars/os/{{ ats_build_os_common_name }}.yml"
+
+ats_build_get_url_defaults:
+  url: "{{ ats_build_source_url }}"
+  dest: "{{ ats_build_directory}}/{{ ats_build_source_url | basename }}"
+ats_build_get_url_args: "{{ ats_build_source_options | combine(ats_build_get_url_defaults) }}"

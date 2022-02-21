@@ -1,0 +1,20 @@
+---
+# Null values should be overloaded.
+
+# Source archive to download.
+ats_build_source_url: null
+
+# Additional options pass to get_url command.
+ats_build_source_options: {}
+
+# Forces a new build on each run.
+ats_build_force: false
+
+# Build directory
+ats_build_directory: /opt/ats_build
+
+# Install directory when you run make install.
+ats_build_configure_prefix: /opt/ats
+
+# Prefix for the tarfile created from packaging install folder.
+ats_build_artifact_prefix: ats-artifact

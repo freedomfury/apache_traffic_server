@@ -1,0 +1,25 @@
+---
+ats_build_packages:
+- centos-release-scl
+- make
+- autoconf
+- automake
+- libtool
+- pkgconfig
+- perl-ExtUtils-MakeMaker
+- openssl-devel
+- pcre-devel
+- ncurses-devel
+- libcurl-devel
+- libcap-devel
+- hwloc-devel
+- flex
+- python3
+- devtoolset-7
+- devtoolset-7-libasan-devel
+
+ats_build_autoconfig: scl enable devtoolset-7 -- autoreconf -if
+ats_build_configure: scl enable devtoolset-7 -- ./configure --prefix={{ ats_build_configure_prefix }}
+ats_build_make: scl enable devtoolset-7 -- make
+ats_build_make_test: scl enable devtoolset-7 -- make test
+ats_build_make_install:  scl enable devtoolset-7 -- make install

@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include ats_manage"
+      include_role:
+        name: "ats_manage"

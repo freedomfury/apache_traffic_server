@@ -1,0 +1,40 @@
+---
+- name: Include OS based variables
+  include_vars: "{{ ats_build_os_vars_path | join('') }}"
+
+- name: Install required packages for build environment
+  package:
+    name: "{{ item }}"
+    state: installed
+    enablerepo: "{{ ats_build_enable_repos | default(omit) }}"
+  loop: "{{ ats_build_packages }}"
+
+- name: Force build
+  file:
+    path: "{{ ats_build_directory }}"
+    state: absent
+  when: (ats_build_force)
+
+- name: Create target build directory
+  file:
+    path: "{{ ats_build_directory }}"
+    state: directory
+    mode: 0755
+
+- name: Download source code
+  get_url: "{{ ats_build_get_url_args }}"
+  register: ats_build_source_results
+
+- name: Attempt build Conditionally 
+  block:
+    - name: Conditionally include builds
+      include_tasks: build.yml
+  rescue:
+    - name: Clean up files build
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ ats_build_directory }}/{{ ats_build_source_url | basename }}"
+        - "{{ ats_build_directory }}/build-{{ ats_build_source_url | basename }}"
+  when: ats_build_source_results.changed

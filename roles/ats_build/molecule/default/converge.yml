@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  gather_subset: min
+  tasks:
+    - name: "Include ats_build"
+      include_role:
+        name: "ats_build"
+      vars:
+        ats_build_source_url: https://github.com/apache/trafficserver/archive/refs/tags/9.1.1.tar.gz
+        ats_build_force: true

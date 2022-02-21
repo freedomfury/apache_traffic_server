@@ -1,0 +1,63 @@
+---
+- name: Set build path fact
+  set_fact:
+    ats_build_workspace: "{{ ats_build_directory }}/build-{{ ats_build_source_url | basename }}"
+
+- name: Create target workspace directory
+  file:
+    path: "{{ ats_build_workspace }}"
+    state: directory
+    mode: 0755
+
+- name: Extract contents
+  unarchive:
+    src: "{{ ats_build_directory }}/{{ ats_build_source_url | basename }}"
+    dest: "{{ ats_build_workspace }}"
+    remote_src: true
+
+- name: Find build directory name
+  find:
+    paths: "{{ ats_build_workspace }}"
+    file_type: directory
+    recurse: false
+  register: ats_build_folder
+
+- name: Set build cwd
+  set_fact:
+    ats_build_work_folder: "{{ ats_build_workspace }}/{{ ats_build_folder.files[0].path | basename }}"
+
+- name: Execute autoconfig
+  command:
+    chdir: "{{ ats_build_work_folder }}"
+    cmd: "{{ ats_build_autoconfig }}"
+  changed_when: false
+
+- name: Configure build
+  command:
+    chdir: "{{ ats_build_work_folder }}"
+    cmd: "{{ ats_build_configure }}"
+  changed_when: false
+
+- name: Make build
+  command:
+    chdir: "{{ ats_build_work_folder }}"
+    cmd: "{{ ats_build_make }}"
+  changed_when: false
+
+- name: Make Test
+  command:
+    chdir: "{{  ats_build_work_folder }}"
+    cmd: "{{ ats_build_make_test }}"
+  changed_when: false
+
+- name: Make Install
+  command:
+    chdir: "{{ ats_build_work_folder }}"
+    cmd: "{{ ats_build_make_install }}"
+  changed_when: false
+
+- name: Create archive on the install directory
+  archive:
+    mode: 0644
+    path: "{{ ats_build_configure_prefix }}"
+    dest: "{{ ats_build_directory }}/{{ ats_build_artifact_prefix }}-{{ ats_build_source_url | basename }}"

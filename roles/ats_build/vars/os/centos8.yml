@@ -1,0 +1,20 @@
+---
+ats_build_packages:
+- epel-release
+- make
+- autoconf
+- automake
+- libtool
+- pkgconfig
+- perl-ExtUtils-MakeMaker
+- openssl-devel
+- pcre-devel
+- ncurses-devel
+- libcurl-devel
+- libcap-devel
+- hwloc-devel
+- flex
+- python3
+- gcc-c++
+
+ats_build_enable_repos: [powertools]

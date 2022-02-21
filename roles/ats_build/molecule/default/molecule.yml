@@ -1,0 +1,19 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: lxd
+platforms:
+  - name: ats01-centos7
+    source:
+      alias: centos/7
+  - name: ats01-centos8
+    source:
+      alias: centos/8-Stream
+  - name: ats01-almalinux8
+    source:
+      alias: almalinux/8
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
