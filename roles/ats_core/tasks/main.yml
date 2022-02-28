@@ -38,3 +38,6 @@
     enabled: "{{ ats_core_service_enabled }}"
     daemon_reload: "{{ ats_core_service_results.changed | ternary('true', 'false') }}"
   register: ats_core_systemd_results
+
+- name: Reload config exchange
+  import_tasks: reload.yml

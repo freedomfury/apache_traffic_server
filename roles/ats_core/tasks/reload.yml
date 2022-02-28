@@ -1,0 +1,16 @@
+---
+- name: Check config is valid
+  command:
+    cmd: "{{ ats_core_home }}/bin/traffic_server -D {{ ats_core_home }}/etc/trafficserver/ -C verify_config"
+  changed_when: false
+
+- name: Check config status
+  command:
+    cmd: "{{ ats_core_home }}/bin/traffic_ctl config status"
+  register: ats_core_config_status
+  changed_when: ('Reconfiguration required' in ats_core_config_status.stdout)
+
+- name: Reload config
+  command:
+    cmd: "{{ ats_core_home }}/bin/traffic_ctl config reload"
+  when: ('Reconfiguration required' in ats_core_config_status.stdout)

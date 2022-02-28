@@ -9,7 +9,7 @@
 {% if row.get('plugins') %}
 {% for plugin in row.plugins %}
  \
-  @plugin={{ plugin.path }}{% for param in plugin.keys() %}{% if param != 'path' %} @{{ param }}={{plugin[param]}}{% endif %}{% endfor %}
+  @plugin={{ plugin.path }}{% for param in plugin.pparams %} @pparam={{ param }}{% endfor %}
 {% endfor %}
 {% endif %}
 
