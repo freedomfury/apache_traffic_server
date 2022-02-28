@@ -1,0 +1,5 @@
+{{ ansible_managed | comment }}
+
+{% for row in ats_core_generic_config %}
+{{ row.pathname }} {{ row.size }}{% if row.get('volume') %} volume={{ row.volume }}{% endif %}{% if row.get('id') %} id={{ row.id }}{% endif %}
+{% endfor %}

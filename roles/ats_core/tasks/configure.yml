@@ -1,0 +1,151 @@
+---
+- name: Manage cache.config file
+  template:
+    src: templates/generic.config.j2
+    dest: /tmp/cache.config
+    mode: 0644
+    owner: root
+    group: root
+  vars:
+    ats_core_generic_config: "{{ ats_core_cache_config }}"
+  when: (ats_core_cache_config | default(false))
+
+- name: Manage hosting.config file
+  template:
+    src: templates/generic.config.j2
+    dest: /tmp/hosting.config
+    mode: 0644
+    owner: root
+    group: root
+  vars:
+    ats_core_generic_config: "{{ ats_core_hosting_config }}"
+  when: (ats_core_hosting_config | default(false))
+
+- name: Manage ip_allow.yaml file
+  template:
+    src: templates/generic.yaml.j2
+    dest: /tmp/ip_allow.yaml
+    mode: 0644
+    owner: root
+    group: root
+  vars:
+    ats_core_generic_yaml: "{{ ats_core_ip_allow }}"
+  when: (ats_core_ip_allow | default(false))
+
+- name: Manage logging.yaml file
+  template:
+    src: templates/generic.yaml.j2
+    dest: /tmp/logging.yaml
+    mode: 0644
+    owner: root
+    group: root
+  vars:
+    ats_core_generic_yaml: "{{ ats_core_logging }}"
+  when: (ats_core_logging | default(false))
+
+- name: Manage parent.config file
+  template:
+    src: templates/generic.config.j2
+    dest: /tmp/parent.config
+    mode: 0644
+    owner: root
+    group: root
+  vars:
+    ats_core_generic_config: "{{ ats_core_parent_config }}"
+  when: (ats_core_parent_config | default(false))
+
+- name: Manage plugin.config file
+  template:
+    src: templates/plugin.config.j2
+    dest: /tmp/plugin.config
+    mode: 0644
+    owner: root
+    group: root
+  when: (ats_core_plugin_config| default(false))
+
+- name: Manage splitdns.config file
+  template:
+    src: templates/generic.config.j2
+    dest: /tmp/splitdns.config
+    mode: 0644
+    owner: root
+    group: root
+  vars:
+    ats_core_generic_config: "{{ ats_core_splitdns_config }}"
+  when: (ats_core_splitdns_config| default(false))
+
+- name: Manage ssl_multicert.config file
+  template: 
+    src: templates/generic.config.j2
+    dest: /tmp/splitdns.config
+    mode: 0644
+    owner: root
+    group: root
+  vars:
+    ats_core_generic_config: "{{ ats_core_ssl_multicert_config }}"
+  when: (ats_core_ssl_multicert_config | default(false))
+
+- name: Manage sni.yaml file
+  template:
+    src: templates/generic.yaml.j2
+    dest: /tmp/sni.yaml
+    mode: 0644
+    owner: root
+    group: root
+  vars:
+    ats_core_generic_yaml: "{{ ats_core_sni }}"
+  when: (ats_core_sni | default(false))
+
+- name: Manage storage.config file
+  template:
+    src: templates/storage.config.j2
+    dest: /tmp/storage.config
+    mode: 0644
+    owner: root
+    group: root
+  when: (ats_core_storage_config | default(false))
+
+- name: Manage strategies.yaml file
+  template:
+    src: templates/generic.yaml.j2
+    dest: /tmp/logging.yaml
+    mode: 0644
+    owner: root
+    group: root
+  vars:
+    ats_core_generic_yaml: "{{ ats_core_strategies }}"
+  when: (ats_core_strategies | default(false))
+
+- name: Manage volume.config file
+  template:
+    src: templates/generic.config.j2
+    dest: /tmp/volume.config
+    mode: 0644
+    owner: root
+    group: root
+  vars:
+    ats_core_generic_config: "{{ ats_core_ssl_volume_config }}"
+  when: (ats_core_volume_config | default(false))
+
+- name: Load remap.config and remap includes
+  block:
+  - name: Manage remap.config file
+    template:
+      src: templates/remap.config.j2
+      dest: /tmp/remap.config
+      mode: 0644
+      owner: root
+      group: root
+    vars:
+      ats_core_remap_generic: "{{ ats_core_remap_config }}"
+
+  - name: Get includes from configuration
+    set_fact:
+      ats_core_remap_include_files: "{{ ats_core_remap_config | json_query(ats_core_remap_includes_query) }}"
+    vars:
+      ats_core_remap_includes_query: "[?type=='include'].files[]"
+
+  - name: Configure conf.d
+    include_tasks: includes.yml
+    when: (ats_core_remap_include_files) 
+  when: (ats_core_remap_config | default(false))

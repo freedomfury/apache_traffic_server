@@ -1,7 +1,8 @@
 ---
 - name: Converge
   hosts: all
+  gather_subset: min
   tasks:
-    - name: "Include ats_manage"
+    - name: "Include ats_core"
       include_role:
-        name: "ats_manage"
+        name: "ats_core"

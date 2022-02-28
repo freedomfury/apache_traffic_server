@@ -1,2 +1,39 @@
 ---
-# tasks file for ats_manage
+- name: Install Packages
+  yum:
+    name: "{{ item }}"
+    state: installed
+  loop: "{{ ats_core_packages }}"
+
+- name: Create target directory
+  file:
+    path: "{{ ats_core_home | dirname }}"
+    state: directory
+
+- name: Extract tar file for deployment
+  unarchive:
+    src: "{{ ats_core_source_archive }}"
+    dest: "{{ ats_core_home | dirname }}"
+  register: ats_core_archive_results
+  when: ats_core_source_archive is defined
+
+- name: Include configuration conditionally
+  include_tasks: configure.yml
+  when: (ats_core_manage_config)
+
+- name: Copy system start up file
+  template:
+    src: templates/trafficserver.service.j2
+    dest: /usr/lib/systemd/system/trafficserver.service
+    mode: 0644
+    owner: root
+    group: root
+  register: ats_core_service_results
+
+- name: Enable and Start service
+  systemd:
+    name: trafficserver
+    state: "{{ ats_core_service_state }}"
+    enabled: "{{ ats_core_service_enabled }}"
+    daemon_reload: "{{ ats_core_service_results.changed | ternary('true', 'false') }}"
+  register: ats_core_systemd_results

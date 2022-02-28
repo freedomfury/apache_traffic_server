@@ -1,0 +1,41 @@
+---
+- name: Create conf.d folder
+  file:
+    state: directory
+    mode: 0755
+    path: "{{ ats_core_conf_inc_dir }}"
+    owner: root
+    group: root
+
+- name: Create config.d files
+  template:
+    dest: "{{ ats_core_conf_inc_dir }}/{{ item }}"
+    src: templates/remap.config.j2
+    mode: 0644
+    owner: root
+    group: root
+  vars:
+    ats_core_remap_generic: "{{ ats_core_remap_includes[item.split('.')[0]] }}"
+  register: ats_core_confd_resources
+  when: ( item.split('.')[0] in ats_core_remap_includes | default([]) )
+  loop: "{{ ats_core_remap_include_files }}"
+
+- name: Purge unmanned files from config.d
+  block:
+  - name: Set variable for managed files
+    set_fact:
+      ats_core_confd_files: "{{ ats_core_confd_resources.results | json_query('[].dest') }}"
+
+  - name: Find files in the conf.d folder
+    find:
+      paths: "{{ ats_core_conf_inc_dir }}"
+      recurse: false
+      file_type: file
+    register: ats_core_confd_remotes
+
+  - name: Purge files from the config.d folder
+    file:
+      path: "{{ item }}"
+      state: absent
+    loop: "{{ ats_core_confd_remotes.files | json_query('[].path') | difference(ats_core_confd_files) }}"
+  when: (ats_core_purge_inc_dir | default(false))

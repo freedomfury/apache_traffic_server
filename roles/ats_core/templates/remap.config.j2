@@ -1,0 +1,30 @@
+{{ ansible_managed | comment }}
+
+{% for row in ats_core_remap_generic %}
+{% if row.type in ['map', 'redirect_temporary', 'reverse_map', 'redirect', 'redirect_temporary'] %}
+{{ row.type }} {{ row.target }} {{ row.replace -}}
+{% if row.get('acls') %}
+{% for key, val in row.acls.items() %} @{{ key }}={{ val }}{% endfor %}
+{% endif %}
+{% if row.get('plugins') %}
+{% for plugin in row.plugins %}
+ \
+  @plugin={{ plugin.path }}{% for param in plugin.keys() %}{% if param != 'path' %} @{{ param }}={{plugin[param]}}{% endif %}{% endfor %}
+{% endfor %}
+{% endif %}
+
+{% endif %}
+{% if row.type == 'map_with_referer' %}
+{{ row.type }} {{ row.client_url }} {{ row.origin_server_url }} {{ row.redirect_url }}{% for regex in row.regexes %} {{ regex }}{% endfor %}
+
+{% endif %}
+{% if row.type in ['activatefilter', 'deactivatefilter'] %}
+.{{ row.type }} {{ row.name }}
+{% endif %}
+{% if row.type == 'definefilter' %}
+.{{ row.type }} {{ row.name }} {% for param in row.keys() %}{% if not param in ['name', 'type'] %} @{{ param }}={{row[param]}}{% endif %}{% endfor %}
+{% endif %}
+{% if row.type == 'include' %}
+.{{ row.type }} {{ row.files | join(' ') }}
+{% endif %}
+{% endfor %}

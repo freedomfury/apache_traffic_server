@@ -10,7 +10,7 @@ platforms:
   # - name: ats01-centos8
   #   source:
   #     alias: centos/8-Stream
-  # - name: ats01-almalinux8
+  - name: ats01-almalinux8
     source:
       alias: almalinux/8
 provisioner:

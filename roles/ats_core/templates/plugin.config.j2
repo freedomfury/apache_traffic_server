@@ -1,0 +1,5 @@
+{{ ansible_managed | comment }}
+
+{% for row in ats_core_plugin_config %}
+{{ row.name }}{% if row.get('args') %}{%for item in row.args %} {{ item }}{% endfor %}{% endif %}
+{% endfor %}

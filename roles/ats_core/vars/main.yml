@@ -1,2 +1,5 @@
 ---
-# vars file for ats_manage
+ats_core_packages:
+  - tar
+  - gzip
+  - hwloc-libs

@@ -1,0 +1,13 @@
+#{{ ansible_managed }}
+
+[Unit]
+Description=Apache Traffic Server is a fast, scalable and extensible caching proxy server.
+After=syslog.target network.target
+
+[Service]
+Type=forking
+ExecStart={{ ats_core_home }}/bin/trafficserver start
+ExecReload={{ ats_core_home }}/bin/traffic_ctl config reload
+
+[Install]
+WantedBy=multi-user.target
