@@ -7,6 +7,7 @@
 
 - name: Create target directory
   file:
+    mode: 0755
     path: "{{ ats_core_home | dirname }}"
     state: directory
 
