@@ -5,4 +5,5 @@ ats_core_service_enabled: true
 ats_core_manage_config: true
 ats_core_purge_inc_dir: true
 ats_core_service_state: started
+ats_core_deploy_folder: /var/cache/ats
 ats_core_source_archive: files/ats-artifact-9.1.1.tar.gz

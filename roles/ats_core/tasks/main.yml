@@ -8,15 +8,38 @@
 - name: Create target directory
   file:
     mode: 0755
-    path: "{{ ats_core_home | dirname }}"
+    path: "{{ item }}"
     state: directory
+  loop:
+    - "{{ ats_core_home | dirname }}"
+    - "{{ ats_core_deploy_folder }}"
+
+- name: Copy tar file from Control node 
+  copy:
+    src: "{{ ats_core_source_archive }}"
+    dest: "{{ ats_core_deploy_folder }}/ats.tar.gz"
+    mode: 0644
+    owner: root
+    group: root
+  when: not ats_core_source_archive | urlsplit('scheme') in ['http','https']
+
+- name: Copy tar file form Url
+  get_url:
+    url: "{{ ats_core_source_archive }}"
+    dest: "{{ ats_core_deploy_folder }}/ats.tar.gz"
+    username: "{{ ats_core_source_username | default(omit) }}"
+    password: "{{ ats_core_source_password | default(omit) }}"
+    checksum: "{{ ats_core_source_checksum | default(omit) }}"
+    force: "{{ ats_core_source_force | default(omit) }}"
+    mode: 0644
+    owner: root
+  when: ats_core_source_archive | urlsplit('scheme') in ['http','https']
 
 - name: Extract tar file for deployment
   unarchive:
-    src: "{{ ats_core_source_archive }}"
+    src: "{{ ats_core_deploy_folder }}/ats.tar.gz"
     dest: "{{ ats_core_home | dirname }}"
-  register: ats_core_archive_results
-  when: ats_core_source_archive is defined
+    remote_src: true
 
 - name: Include configuration conditionally
   include_tasks: configure.yml
